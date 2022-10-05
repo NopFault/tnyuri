@@ -1,0 +1,6 @@
+{
+    "domain": "YourDomain.com",
+    "database": "/database/tnyuri.db",
+    "maxperuser": 5,
+    "token": "Your discord token"
+}
