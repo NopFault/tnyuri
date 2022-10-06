@@ -61,50 +61,80 @@ func Init() {
 
 func Insert(q string) int {
 	db := instance()
-	result, err := db.Exec(q)
-	defer db.Close()
-
-	id, err := result.LastInsertId()
+	_, err := db.Prepare(q)
 	if err != nil {
-		fmt.Println("Getting last Id (insert query): ", err)
+		fmt.Println("Klaida on prepare")
+		fmt.Println(err)
+	} else {
+		result, err := db.Exec(q)
+		id, err := result.LastInsertId()
+		if err != nil {
+			fmt.Println("Getting last Id (insert query): ", err)
+		}
+
+		return int(id)
 	}
 
-	return int(id)
+	defer db.Close()
+	return -1
+
 }
 
 func Exec(q string) {
 	db := instance()
-	_, err := db.Exec(q)
+
+	_, err := db.Prepare(q)
+	if err != nil {
+		fmt.Println("Klaida on prepare")
+		fmt.Println(err)
+	} else {
+		_, err := db.Exec(q)
+		if err != nil {
+			fmt.Println("Having problems by executing query:")
+			fmt.Println(q)
+			fmt.Println(err)
+		}
+	}
 	defer db.Close()
 
-	if err != nil {
-		fmt.Println("Having problems by executing query:")
-		fmt.Println(q)
-		fmt.Println(err)
-	}
 }
 
 func Select[R any](q string) R {
 	var selection R
 	db := instance()
 
-	if err := db.Get(&selection, q); err != nil {
-		fmt.Println("Error selecting data: ", err)
-	}
+	_, err := db.Prepare(q)
+	if err != nil {
+		fmt.Println("Klaida on prepare")
+		fmt.Println(err)
+	} else {
 
+		if err := db.Get(&selection, q); err != nil {
+			fmt.Println("Error selecting data: ", err)
+		}
+		return selection
+	}
 	defer db.Close()
 
-	return selection
+	return *new(R)
 }
 
 func RowsBy[R any](from string, by string, val string) []R {
 	db := instance()
 	defer db.Close()
-
 	var rows []R
-	err := db.Select(&rows, "SELECT * FROM "+from+" where "+by+"='"+val+"'")
+
+	_, err := db.Prepare("SELECT * FROM " + from + " where " + by + "='" + val + "'")
 	if err != nil {
+		fmt.Println("Klaida on prepare")
 		fmt.Println(err)
+	} else {
+		err := db.Select(&rows, "SELECT * FROM "+from+" where "+by+"='"+val+"'")
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		return rows
 	}
 
 	defer db.Close()

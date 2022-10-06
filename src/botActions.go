@@ -26,11 +26,14 @@ func (b *Bot) Add(user string, url string) {
 				var nlink *URL = new(URL)
 				nlink.User = user
 				nlink.Url = url
-				nlink.Save()
+				var id int = nlink.Save()
+				if id >= 0 {
+					b.Send("Your link was created: " + config.Domain + nlink.Short)
+					b.Send("`" + strconv.Itoa(id) + ", " + nlink.Url + ", " + config.Domain + nlink.Short + "`")
 
-				b.Send("Your link was created: " + config.Domain + nlink.Short)
-
-				b.Send("`" + strconv.Itoa(nlink.Id) + ", " + nlink.Url + ", " + config.Domain + nlink.Short + "`")
+				} else {
+					b.Send("Cant create this link")
+				}
 			}
 		}
 	} else {
@@ -41,7 +44,7 @@ func (b *Bot) Add(user string, url string) {
 func (b *Bot) Delete(user string, id int) {
 	if exists(user, id) {
 		Delete[URL](user, id)
-		b.Send("DELETED")
+		b.Send("ID: " + strconv.Itoa(id) + " deleted!")
 	}
 }
 
