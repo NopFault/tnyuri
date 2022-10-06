@@ -41,16 +41,19 @@ func (U *URL) hash() {
 	U.Short = finalString[:5]
 }
 
-func (U *URL) Save() {
+func (U *URL) Save() int {
 	if U.isValid() {
 		U.hash()
 		var id int = Insert("insert into url (url, short, user) VALUES ('" + U.Url + "','" + U.Short + "','" + U.User + "')")
 		Insert("insert into stats (url_id, counter) VALUES ('" + strconv.Itoa(id) + "','0')")
+		return id
 	} else {
 		fmt.Println("URL Object:")
 		fmt.Println(U)
 		fmt.Println("does not meet the requirements")
 	}
+
+	return -1
 }
 
 func (U *URL) Stats() Stats {

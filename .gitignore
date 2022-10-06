@@ -1,2 +1,4 @@
 config.json
 go.sum
+./database/
+./database/tnyuri.db

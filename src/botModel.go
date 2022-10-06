@@ -55,6 +55,8 @@ func (b *Bot) Handle(data []string) {
 			}
 			strList += "```"
 			b.Send(strList)
+		} else {
+			b.Send("You dont have any links created")
 		}
 	}
 }
