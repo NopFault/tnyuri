@@ -17,13 +17,14 @@ func (b *Bot) Send(msg string) {
 
 func (b *Bot) Handle(data []string) {
 
+	var userId string = b.Message.Author.ID
 	var username string = b.Message.Author.Username
 	var action string = data[1]
 
 	if action == "add" {
 		if len(data) > 2 {
 			// botactions
-			b.Add(username, data[2])
+			b.Add(username, userId, data[2])
 		}
 
 	} else if action == "delete" {

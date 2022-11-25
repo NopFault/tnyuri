@@ -3,6 +3,7 @@ package tnyuri
 import (
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -32,11 +33,18 @@ func followShort(w http.ResponseWriter, r *http.Request) {
 	var item []URL = By[URL]("short", short)
 
 	if len(item) > 0 {
+
+		visitor := r.RemoteAddr
+		userAgent := r.UserAgent()
+
+		message := "User `" + visitor + "` with Agent of: `" + userAgent + "` just triggered your tiny uri with id: `" + strconv.Itoa(item[0].Id) + "` and link to `" + item[0].Url + "`."
+
 		// Update stats
 		stats := item[0].Stats()
 		stats.Increase()
 
-		// Redirect to url
-		http.Redirect(w, r, item[0].Url, 301)
+		if NotifyUser(item[0].Uid, message) {
+			http.Redirect(w, r, item[0].Url, 301)
+		}
 	}
 }

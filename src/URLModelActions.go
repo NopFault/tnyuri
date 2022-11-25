@@ -44,7 +44,7 @@ func (U *URL) hash() {
 func (U *URL) Save() int {
 	if U.isValid() {
 		U.hash()
-		var id int = Insert("insert into url (url, short, user) VALUES ('" + U.Url + "','" + U.Short + "','" + U.User + "')")
+		var id int = Insert("insert into url (url, short, user, uid) VALUES ('" + U.Url + "','" + U.Short + "','" + U.User + "', '" + U.Uid + "')")
 		Insert("insert into stats (url_id, counter) VALUES ('" + strconv.Itoa(id) + "','0')")
 		return id
 	} else {

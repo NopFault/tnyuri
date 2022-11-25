@@ -35,6 +35,7 @@ func Init() {
 		"url" TEXT,
 		"short" TEXT NOT NULL UNIQUE,
 		"user" TEXT,
+		"uid" TEXT,
 		"timestamp" DATETIME DEFAULT CURRENT_TIMESTAMP
 	);`
 

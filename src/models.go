@@ -10,6 +10,7 @@ type URL struct {
 	Url   string `db:"url"`
 	Short string `db:"short"`
 	User  string `db:"user"`
+	Uid   string `db:"uid"`
 	Time  string `db:"timestamp"`
 }
 
