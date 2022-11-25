@@ -14,7 +14,7 @@ func exists(user string, id int) bool {
 	return Select[int]("SELECT count(*) FROM url WHERE user='"+user+"' AND id='"+strconv.Itoa(id)+"'") > 0
 }
 
-func (b *Bot) Add(user string, url string) {
+func (b *Bot) Add(user string, userId string, url string) {
 	if isURL(url) {
 
 		if Select[int]("SELECT COUNT(*) FROM url WHERE user='"+user+"'") >= config.Maxperuser {
@@ -25,6 +25,7 @@ func (b *Bot) Add(user string, url string) {
 			} else {
 				var nlink *URL = new(URL)
 				nlink.User = user
+				nlink.Uid = userId
 				nlink.Url = url
 				var id int = nlink.Save()
 				if id >= 0 {
