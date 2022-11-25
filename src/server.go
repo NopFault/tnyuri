@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gorilla/mux"
 )
@@ -26,6 +27,17 @@ func index(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("It's Working"))
 }
 
+func getIPAddress(r *http.Request) string {
+	for _, h := range []string{"X-Forwarded-For", "X-Real-Ip"} {
+		addresses := strings.Split(r.Header.Get(h), ",")
+		for i := len(addresses) - 1; i >= 0; i-- {
+			ip := strings.TrimSpace(addresses[i])
+			return ip
+		}
+	}
+	return ""
+}
+
 func followShort(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	short := params["short"]
@@ -34,7 +46,7 @@ func followShort(w http.ResponseWriter, r *http.Request) {
 
 	if len(item) > 0 {
 
-		visitor := r.RemoteAddr
+		visitor := getIPAddress(r)
 		userAgent := r.UserAgent()
 
 		message := "User `" + visitor + "` with Agent of: `" + userAgent + "` just triggered your tiny uri with id: `" + strconv.Itoa(item[0].Id) + "` and link to `" + item[0].Url + "`."
